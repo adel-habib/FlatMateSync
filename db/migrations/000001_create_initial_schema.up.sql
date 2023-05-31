@@ -26,7 +26,7 @@ CREATE TABLE flats (
 -- The balance can be positive or negative depending on the user's total payments and shares in the flat.
 CREATE TABLE user_flats (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL REFERENCES users(id),
+  username VARCHAR(255) NOT NULL REFERENCES users(username),
   flat_id INTEGER NOT NULL REFERENCES flats(id),
   is_admin BOOLEAN NOT NULL DEFAULT FALSE,
   balance FLOAT NOT NULL DEFAULT 0,
@@ -42,7 +42,7 @@ CREATE TABLE payments (
   id SERIAL PRIMARY KEY,
   amount FLOAT NOT NULL,
   description TEXT,
-  payer_id INTEGER NOT NULL REFERENCES users(id),
+  payer VARCHAR(255) NOT NULL REFERENCES users(username),
   flat_id INTEGER NOT NULL REFERENCES flats(id),
   payment_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   deleted_at TIMESTAMP,
@@ -56,7 +56,7 @@ CREATE TABLE payments (
 CREATE TABLE payment_participants (
   id SERIAL PRIMARY KEY,
   payment_id INTEGER NOT NULL REFERENCES payments(id),
-  participant_id INTEGER NOT NULL REFERENCES users(id),
+  participant VARCHAR(255) NOT NULL REFERENCES users(username),
   deleted_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
