@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: flatematesync
+      DATABASE_PORT: 5432
+    entrypoint: ["/app/wait-for.sh","db:5432","--","/app/init.sh"]
+    command: "/app/main"
+
+  db:
+    image: postgres:15.3-alpine3.18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: flatematesync
+    ports:
+      - "5432:5432"
+
+  

@@ -30,8 +30,6 @@ type Querier interface {
 	// List with pagination
 	ListFlats(ctx context.Context, arg ListFlatsParams) ([]Flat, error)
 	// List with pagination
-	ListUserFlats(ctx context.Context, arg ListUserFlatsParams) ([]ListUserFlatsRow, error)
-	// List with pagination
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	// Delete (Soft Delete)
 	SoftDeleteFlat(ctx context.Context, id int32) error

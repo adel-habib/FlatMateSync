@@ -12,7 +12,7 @@ type Config struct {
 		Port     int
 		User     string
 		Password string
-		DBName   string
+		Name     string
 	}
 
 	Server struct {

@@ -20,7 +20,7 @@ type Payment struct {
 	ID          int32
 	Amount      float64
 	Description sql.NullString
-	PayerID     int32
+	Payer       string
 	FlatID      int32
 	PaymentDate time.Time
 	DeletedAt   sql.NullTime
@@ -29,12 +29,12 @@ type Payment struct {
 }
 
 type PaymentParticipant struct {
-	ID            int32
-	PaymentID     int32
-	ParticipantID int32
-	DeletedAt     sql.NullTime
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID          int32
+	PaymentID   int32
+	Participant string
+	DeletedAt   sql.NullTime
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type User struct {
@@ -49,7 +49,7 @@ type User struct {
 
 type UserFlat struct {
 	ID        int32
-	UserID    int32
+	Username  string
 	FlatID    int32
 	IsAdmin   bool
 	Balance   float64

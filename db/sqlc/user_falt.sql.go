@@ -7,30 +7,28 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"time"
 )
 
 const createUserFlat = `-- name: CreateUserFlat :one
 INSERT INTO user_flats (
-  user_id, flat_id, is_admin, balance
+  username, flat_id, is_admin, balance
 ) VALUES (
   $1, $2, $3, $4
 )
-RETURNING id, user_id, flat_id, is_admin, balance, deleted_at, created_at, updated_at
+RETURNING id, username, flat_id, is_admin, balance, deleted_at, created_at, updated_at
 `
 
 type CreateUserFlatParams struct {
-	UserID  int32
-	FlatID  int32
-	IsAdmin bool
-	Balance float64
+	Username string
+	FlatID   int32
+	IsAdmin  bool
+	Balance  float64
 }
 
 // Create
 func (q *Queries) CreateUserFlat(ctx context.Context, arg CreateUserFlatParams) (UserFlat, error) {
 	row := q.db.QueryRowContext(ctx, createUserFlat,
-		arg.UserID,
+		arg.Username,
 		arg.FlatID,
 		arg.IsAdmin,
 		arg.Balance,
@@ -38,7 +36,7 @@ func (q *Queries) CreateUserFlat(ctx context.Context, arg CreateUserFlatParams) 
 	var i UserFlat
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
 		&i.FlatID,
 		&i.IsAdmin,
 		&i.Balance,
@@ -50,7 +48,7 @@ func (q *Queries) CreateUserFlat(ctx context.Context, arg CreateUserFlatParams) 
 }
 
 const getUserFlat = `-- name: GetUserFlat :one
-SELECT id, user_id, flat_id, is_admin, balance, deleted_at, created_at, updated_at FROM user_flats
+SELECT id, username, flat_id, is_admin, balance, deleted_at, created_at, updated_at FROM user_flats
 WHERE id = $1 AND deleted_at IS NULL
 `
 
@@ -60,7 +58,7 @@ func (q *Queries) GetUserFlat(ctx context.Context, id int32) (UserFlat, error) {
 	var i UserFlat
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
 		&i.FlatID,
 		&i.IsAdmin,
 		&i.Balance,
@@ -82,68 +80,6 @@ func (q *Queries) HardDeleteUserFlat(ctx context.Context, id int32) error {
 	return err
 }
 
-const listUserFlats = `-- name: ListUserFlats :many
-SELECT uf.id, uf.user_id, uf.flat_id, uf.is_admin, uf.balance, uf.deleted_at, uf.created_at, uf.updated_at, u.username, f.name as flat_name FROM user_flats uf
-JOIN users u ON uf.user_id = u.username
-JOIN flats f ON uf.flat_id = f.id
-WHERE uf.deleted_at IS NULL
-ORDER BY uf.created_at DESC
-LIMIT $1 OFFSET $2
-`
-
-type ListUserFlatsParams struct {
-	Limit  int32
-	Offset int32
-}
-
-type ListUserFlatsRow struct {
-	ID        int32
-	UserID    int32
-	FlatID    int32
-	IsAdmin   bool
-	Balance   float64
-	DeletedAt sql.NullTime
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Username  string
-	FlatName  string
-}
-
-// List with pagination
-func (q *Queries) ListUserFlats(ctx context.Context, arg ListUserFlatsParams) ([]ListUserFlatsRow, error) {
-	rows, err := q.db.QueryContext(ctx, listUserFlats, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []ListUserFlatsRow
-	for rows.Next() {
-		var i ListUserFlatsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.FlatID,
-			&i.IsAdmin,
-			&i.Balance,
-			&i.DeletedAt,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Username,
-			&i.FlatName,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const softDeleteUserFlat = `-- name: SoftDeleteUserFlat :exec
 UPDATE user_flats
 SET 
@@ -163,7 +99,7 @@ SET
   is_admin = $1, 
   balance = $2
 WHERE id = $3 AND deleted_at IS NULL
-RETURNING id, user_id, flat_id, is_admin, balance, deleted_at, created_at, updated_at
+RETURNING id, username, flat_id, is_admin, balance, deleted_at, created_at, updated_at
 `
 
 type UpdateUserFlatParams struct {
@@ -178,7 +114,7 @@ func (q *Queries) UpdateUserFlat(ctx context.Context, arg UpdateUserFlatParams) 
 	var i UserFlat
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
+		&i.Username,
 		&i.FlatID,
 		&i.IsAdmin,
 		&i.Balance,
