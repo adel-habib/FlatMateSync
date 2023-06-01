@@ -17,6 +17,7 @@ type Querier interface {
 	CreateUserFlat(ctx context.Context, arg CreateUserFlatParams) (UserFlat, error)
 	// Read
 	GetFlat(ctx context.Context, id int32) (Flat, error)
+	GetFlatWithUsers(ctx context.Context, id int32) ([]GetFlatWithUsersRow, error)
 	// Read
 	GetUser(ctx context.Context, username string) (User, error)
 	// Read

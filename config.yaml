@@ -1,9 +1,12 @@
 database:
   host: localhost
   port: 5432
-  user: your_username
-  password: your_password
-  dbname: your_database_name
+  user: postgres
+  password: password
+  dbname: flatmatesync
 server:
   host: localhost
   port: 8080
+client:
+  id: client_id 
+  secret: client_secret

@@ -38,3 +38,17 @@ SELECT * FROM flats
 WHERE deleted_at IS NULL
 ORDER BY created_at DESC
 LIMIT $1 OFFSET $2;
+
+
+-- name: GetFlatWithUsers :many
+SELECT 
+  sqlc.embed(f),
+  sqlc.embed(u)
+FROM
+  flats f
+JOIN 
+  user_flats uf ON f.id = uf.flat_id
+JOIN 
+  users u ON uf.username = u.username
+WHERE 
+  f.id = $1;

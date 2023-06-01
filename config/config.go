@@ -17,7 +17,12 @@ type Config struct {
 
 	Server struct {
 		Host string
-		Port int
+		Port string
+	}
+
+	Client struct {
+		Id     string
+		secret string
 	}
 }
 

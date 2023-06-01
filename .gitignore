@@ -19,3 +19,11 @@
 
 # Go workspace file
 go.work
+
+# IDE/Editor folders
+.idea/
+.vscode/
+
+
+# local files
+*.local

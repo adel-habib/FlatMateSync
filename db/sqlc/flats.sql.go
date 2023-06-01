@@ -49,6 +49,60 @@ func (q *Queries) GetFlat(ctx context.Context, id int32) (Flat, error) {
 	return i, err
 }
 
+const getFlatWithUsers = `-- name: GetFlatWithUsers :many
+SELECT 
+  f.id, f.name, f.deleted_at, f.created_at,
+  u.username, u.email, u.password_hash, u.oidc_id, u.oidc_provider, u.deleted_at, u.created_at
+FROM
+  flats f
+JOIN 
+  user_flats uf ON f.id = uf.flat_id
+JOIN 
+  users u ON uf.username = u.username
+WHERE 
+  f.id = $1
+`
+
+type GetFlatWithUsersRow struct {
+	Flat Flat
+	User User
+}
+
+func (q *Queries) GetFlatWithUsers(ctx context.Context, id int32) ([]GetFlatWithUsersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getFlatWithUsers, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetFlatWithUsersRow
+	for rows.Next() {
+		var i GetFlatWithUsersRow
+		if err := rows.Scan(
+			&i.Flat.ID,
+			&i.Flat.Name,
+			&i.Flat.DeletedAt,
+			&i.Flat.CreatedAt,
+			&i.User.Username,
+			&i.User.Email,
+			&i.User.PasswordHash,
+			&i.User.OidcID,
+			&i.User.OidcProvider,
+			&i.User.DeletedAt,
+			&i.User.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const hardDeleteFlat = `-- name: HardDeleteFlat :exec
 DELETE FROM flats
 WHERE id = $1
