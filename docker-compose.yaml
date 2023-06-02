@@ -14,7 +14,8 @@ services:
       DATABASE_PASSWORD: password
       DATABASE_NAME: flatematesync
       DATABASE_PORT: 5432
-    entrypoint: ["/app/wait-for.sh","db:5432","--","/app/init.sh"]
+      DATABASE_migrations_url: file://db/migrations
+    entrypoint: ["/app/wait-for.sh","db:5432","--"]
     command: "/app/main"
 
   db:
