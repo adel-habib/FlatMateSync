@@ -8,11 +8,12 @@ import (
 
 type Config struct {
 	Database struct {
-		Host     string
-		Port     int
-		User     string
-		Password string
-		Name     string
+		Host           string
+		Port           string
+		User           string
+		Password       string
+		Name           string
+		Migrations_Url string
 	}
 
 	Server struct {
@@ -20,9 +21,9 @@ type Config struct {
 		Port string
 	}
 
-	Client struct {
-		Id     string
-		secret string
+	Oauth struct {
+		Client_Id     string
+		Client_Secret string
 	}
 }
 

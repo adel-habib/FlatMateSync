@@ -4,9 +4,10 @@ database:
   user: postgres
   password: password
   dbname: flatmatesync
+  migrations_url: file://db/migrations
 server:
   host: localhost
   port: 8080
-client:
-  id: client_id 
-  secret: client_secret
+oauth:
+  client_id: client_id 
+  client_secret: client_secret
