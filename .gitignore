@@ -27,3 +27,6 @@ go.work
 
 # local files
 *.local
+
+# temporary artifacts
+tmp/
